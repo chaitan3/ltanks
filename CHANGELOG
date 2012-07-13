@@ -1,0 +1,16 @@
+Version 0.5
+
+Added Anti-Tank shooting animation
+Added a configuration file
+Added Support for custom level files
+Added Support for custom graphics (LTG Files)
+Added Scaling support
+Added support for compressed BMP's
+Reduced Memory usage
+Some Performance Improvements
+Some UI improvements
+Added buttons
+Tank is now identified as an obstable
+Infinite loop bug fixed
+Various Other bug fixes.
+

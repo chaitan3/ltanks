@@ -1,0 +1,37 @@
+KEYBOARD CONTROLS:
+
+    Move Up = Up Arrow Key
+    Move Down = Down Arrow Key
+    Move Left = Left Arrow Key
+    Move Right = Right Arrow Key
+    Shoot Laser = Space
+    Undo = Backspace
+    Restart = Enter/Return
+    Hint = H
+    Load Level = L
+    Load Next Level = N
+    Load Previous Level = P
+
+    Note: Don't use the Numpad
+
+Config File: ltanks.conf 
+
+    Note: Case Sensitive
+
+    LTG File: Alternative LaserTank graphics file to load, path relative to ltanks folder.
+    eg:
+    LTG File = /path/to/filename.ltg
+    You can download LTG files from http://pages.globetrotter.net/lasertank/start.html
+
+    Level File: Alternative level file to use
+    You can download Level files from http://pages.globetrotter.net/lasertank/ltank_en.html
+
+    Difficulty: Sets the levels that will be loaded in the game
+    options are all,kids,easy,medium,hard,deadly
+    eg:
+    Difficulty = all
+    
+    Scaled Size: Size to scale the playing area to, default size is 512, so enter a number greater than 512.
+    eg:
+    Scaled Size = 600
+
