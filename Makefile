@@ -1,4 +1,4 @@
-CC = clang
+CC = gcc
 #CC = emscripten/emcc
 FLAGS = -Wall
 LIBS = -lSDL -lSDL_ttf

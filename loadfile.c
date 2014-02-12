@@ -16,10 +16,8 @@
  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
 #include<stdlib.h>
-#include<SDL/SDL.h>
-#include<SDL/SDL_ttf.h>
+#include "common.h"
 #include "loadfile.h"
 #include "gui.h"
 #include "drawscreen.h"
@@ -100,22 +98,12 @@ void Load_Bitmaps(SDL_RWops *game,SDL_RWops *mask)
         src.x=32*(i%10);
         src.y=32*(i/10);
         
-		if(config_file.scaling)
-		{
-			SDL_BlitSurface(BMP_File,&src,tmp,NULL);
-			Bitmaps[i]=Scale(tmp,config_file.tile_size);
-			SDL_BlitSurface(Mask_File,&src,tmp,NULL);
-			Mask[i]=Scale(tmp,config_file.tile_size);
-		}
-		else
-		{
 			Bitmaps[i]=SDL_CreateRGBSurface(SDL_SWSURFACE,config_file.tile_size \
 			,config_file.tile_size,24,0,0,0,0);
 			Mask[i]=SDL_CreateRGBSurface(SDL_SWSURFACE,config_file.tile_size \
 			,config_file.tile_size,24,0,0,0,0);
 			SDL_BlitSurface(BMP_File,&src,Bitmaps[i],NULL);
 			SDL_BlitSurface(Mask_File,&src,Mask[i],NULL);
-		}
     }
     SDL_FreeSurface(BMP_File);
     SDL_FreeSurface(Mask_File);

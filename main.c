@@ -16,10 +16,7 @@
  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<stdio.h>
-#include<SDL/SDL.h>
-#include<SDL/SDL_ttf.h>
-#include<SDL/SDL_getenv.h>
+#include "common.h"
 #include "loadfile.h"
 #include "drawscreen.h"
 #include "play.h"
@@ -39,8 +36,6 @@ int main(int argc,char **argv)
 {
     SDL_Event event;
     
-    putenv("SDL_VIDEO_CENTERED=1");
-    
     if(SDL_Init(SDL_INIT_VIDEO)==-1)
     {
         printf("Unable to Initialise SDL: %s\n",SDL_GetError());
@@ -51,23 +46,17 @@ int main(int argc,char **argv)
         printf("Unable to Initialise SDL_ttf: %s\n",TTF_GetError());
         exit(1);
     }
-	SDL_WM_SetCaption("LTanks","chaitan3");
     
     config_file.difficulty=0;
-	config_file.scaling=0;
     Load_Config();
-    if(config_file.scaled_size<512+32)
-        config_file.scaled_size=512;
-	else
-	{
-		config_file.scaled_size=config_file.scaled_size-(config_file.scaled_size%32);
-		config_file.scaling=1;
-	}
 		
-	config_file.tile_size=config_file.scaled_size/16;
+	config_file.tile_size=32;
 	
-	scr.screen=SDL_SetVideoMode(config_file.scaled_size + 188 \
-		,config_file.scaled_size,24,SDL_SWSURFACE | SDL_DOUBLEBUF);
+        SDL_Window* window = SDL_CreateWindow("LTanks", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, \
+                             0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
+        scr.screen = SDL_CreateRenderer(window, -1, 0);
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+        SDL_RenderSetLogicalSize(scr.screen, 512+188, 512);
         
     if(scr.screen==NULL)
     {

@@ -16,8 +16,6 @@
  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<SDL/SDL.h>
-#include<SDL/SDL_ttf.h>
 #include "loadfile.h"
 #include "drawscreen.h"
 #include "play.h"
@@ -198,7 +196,9 @@ void Draw_Update()
 void Redraw()
 {
     Draw_Update();
-	SDL_UpdateRect(scr.screen,0,0,config_file.scaled_size,config_file.scaled_size);
+    SDL_RenderClear(scr.renderer);
+    SDL_RenderCopy(scr.renderer, scr.texture, NULL, NULL);
+    SDL_RenderPresent(scr.renderer);
 }
 
 void Draw_Laser_Shot()

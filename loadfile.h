@@ -18,6 +18,9 @@
 
 #ifndef LOADFILE_H
 #define LOADFILE_H
+
+#include "common.h"
+
 void Load_Levels();
 void Load_Bitmaps(SDL_RWops *,SDL_RWops*);
 void Load_LTG();

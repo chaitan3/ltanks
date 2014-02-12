@@ -84,7 +84,7 @@ Obj			BitM	Description
 #ifndef DRAWSCREEN_H
 #define DRAWSCREEN_H
 
-#include<SDL/SDL_ttf.h>
+#include "common.h"
 #include "play.h"
 
 void Load_Level(int );
@@ -111,7 +111,7 @@ struct CurrentStatus{
 };
 
 struct Screen{
-    SDL_Surface *screen;
+    SDL_Renderer *renderer;
     TTF_Font *font;
 };
 
