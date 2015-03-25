@@ -1,6 +1,4 @@
 #include<string.h>
-#include<SDL/SDL.h>
-#include<SDL/SDL_ttf.h>
 #include "drawscreen.h"
 #include "gui.h"
 #include "play.h"
@@ -129,7 +127,7 @@ void Draw_SideBar()
     }
 	dest.x=config_file.scaled_size;
 	dest.y=0;
-    SDL_UpdateRect(scr.screen,dest.x,dest.y,188,512);
+    //SDL_UpdateRect(scr.screen,dest.x,dest.y,188,512);
 }
 
 void Draw_LoadBox()
@@ -162,7 +160,8 @@ void Draw_LoadBox()
     dest.h=128;
     SDL_BlitSurface(pause,NULL,scr.screen,&dest);
 	
-    SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
+    //SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
+    Redraw();
     
     while(flag)
     {
@@ -287,7 +286,8 @@ void Draw_LoadBox()
 				dest.w=256;
 				dest.h=128;
 				SDL_BlitSurface(pause,NULL,scr.screen,&dest);
-                SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
+                //SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
+                Redraw();
             }
 
         }
@@ -298,8 +298,9 @@ void Draw_LoadBox()
     if(lvl<numlevels && lvl>0)
     {
         Load_Level(lvl-1);
-        Redraw();
         Draw_SideBar();
+        Draw_Update();
+        Redraw();
     }
     else
         Unload();
@@ -355,7 +356,7 @@ void Show_Hint()
     dest.w=256;
     dest.h=128;
     SDL_BlitSurface(pause,NULL,scr.screen,&dest);
-    SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
+    //SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
     
 	flag=1;
     while(flag)
@@ -419,13 +420,14 @@ void Game_Pause(char *str)
     dest.w=256;
     dest.h=128;
     SDL_BlitSurface(pause,NULL,scr.screen,&dest);
-    SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
+    //SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
+    Redraw();
     
     while(flag)
     {
         SDL_Delay(10);
         while(SDL_PollEvent(&event))
-		{
+	{
             if(event.type==SDL_MOUSEBUTTONDOWN)
             {
                 if(event.button.button==SDL_BUTTON_LEFT)
@@ -434,22 +436,25 @@ void Game_Pause(char *str)
                     {
                         case 8:
                         Undo();
-                        Redraw();
                         Draw_SideBar();
+                        Draw_Update();
+                        Redraw();
                         flag=0;
                         break;
                         case 9:
                         Load_Level(cur_stat.cur_level);
-                        Redraw();
                         Draw_SideBar();
+                        Draw_Update();
+                        Redraw();
                         flag=0;
                         break;
                         case 10:
                         if(Load_Next_Level())
                         {
                             Load_Level(cur_stat.cur_level);
-                            Redraw();
                             Draw_SideBar();
+                            Draw_Update();
+                            Redraw();
                             flag=0;
                             break;
                         }
@@ -469,7 +474,7 @@ void Game_Pause(char *str)
                     }
                  }   
             }
-			else if(event.type==SDL_KEYDOWN)
+	    else if(event.type==SDL_KEYDOWN)
 			{	
 				switch(event.key.keysym.sym)
                 {
@@ -479,22 +484,25 @@ void Game_Pause(char *str)
                         break;
                     case SDLK_BACKSPACE:
                         Undo();
-                        Redraw();
                         Draw_SideBar();
+                        Draw_Update();
+                        Redraw();
                         flag=0;
                         break;
                     case SDLK_RETURN:
                         Load_Level(cur_stat.cur_level);
-                        Redraw();
                         Draw_SideBar();
+                        Draw_Update();
+                        Redraw();
                         flag=0;
                         break;
                     case SDLK_n:
                     if(Load_Next_Level())
                     {
                         Load_Level(cur_stat.cur_level);
-                        Redraw();
                         Draw_SideBar();
+                        Draw_Update();
+                        Redraw();
                         flag=0;
                         break;
                     }
@@ -512,7 +520,7 @@ void Game_Pause(char *str)
 			{
                 SDL_FreeSurface(pause);
                 Unload();
-			}
+	    }
         }
     }
     SDL_FreeSurface(pause);

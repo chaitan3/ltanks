@@ -112,6 +112,8 @@ struct CurrentStatus{
 
 struct Screen{
     SDL_Renderer *renderer;
+    SDL_Surface *screen;
+    SDL_Texture *texture;
     TTF_Font *font;
 };
 

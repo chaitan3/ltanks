@@ -25,7 +25,6 @@
 #include<stdio.h>
 #include<string.h>
 
-#include<SDL/SDL.h>
 #include "bmp_loader.h"
 
 /* See if an image is contained in a data source */
@@ -48,9 +47,9 @@ int IMG_isBMP(SDL_RWops *src)
 	return(is_BMP);
 }
 
-#include<SDL/SDL_error.h>
-#include<SDL/SDL_video.h>
-#include<SDL/SDL_endian.h>
+#include<SDL2/SDL_error.h>
+#include<SDL2/SDL_video.h>
+#include<SDL2/SDL_endian.h>
 
 /* Compression encodings for BMP files */
 #ifndef BI_RGB
@@ -334,14 +333,14 @@ static SDL_Surface *LoadBMP_RW (SDL_RWops *src, int freesrc)
 				SDL_RWread(src, &palette->colors[i].b, 1, 1);
 				SDL_RWread(src, &palette->colors[i].g, 1, 1);
 				SDL_RWread(src, &palette->colors[i].r, 1, 1);
-				palette->colors[i].unused = 0;
+                                palette->colors[i].a = 0;
 			}	
 		} else {
 			for ( i = 0; i < (int)biClrUsed; ++i ) {
 				SDL_RWread(src, &palette->colors[i].b, 1, 1);
 				SDL_RWread(src, &palette->colors[i].g, 1, 1);
 				SDL_RWread(src, &palette->colors[i].r, 1, 1);
-				SDL_RWread(src, &palette->colors[i].unused, 1, 1);
+				SDL_RWread(src, &palette->colors[i].a, 1, 1);
 			}	
 		}
 		palette->ncolors = biClrUsed;

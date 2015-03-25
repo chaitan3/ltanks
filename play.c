@@ -16,7 +16,6 @@
  *       along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<SDL/SDL.h>
 #include "drawscreen.h"
 #include "gui.h"
 #include "play.h"
@@ -105,24 +104,28 @@ void Tank_Move(Uint8 direction)
         
         if(cur_stat.blocks[cur_stat.tank_x][cur_stat.tank_y].main==9)
         {
-			Redraw();
+            Draw_Update();
+            Redraw();
             Game_Pause("You fell into Water");
         }
 		
         if(Check_Line_Of_Fire())
         {
-			Redraw();
-			Shoot_Laser(2);
+            Draw_Update();
+            Redraw();
+            Shoot_Laser(2);
 			
             Game_Pause("An Anti-Tank Hit you");
         }
         if(cur_stat.blocks[cur_stat.tank_x][cur_stat.tank_y].main==6)
         {
-			Redraw();
+            Draw_Update();
+            Redraw();
             Game_Pause("You Won");
         }
         
     }
+    Draw_Update();
     Redraw();
 }
 
@@ -177,6 +180,7 @@ void Shoot_Laser(Uint8 on)
 		
 		if(Check_Line_Of_Fire())
 		{
+                        Draw_Update();
 			Redraw();
 			Shoot_Laser(2);
 			Game_Pause("An Anti-Tank Hit you");
@@ -322,6 +326,7 @@ void Check_Ride()
         || cur_stat.blocks[cur_stat.tank_x][cur_stat.tank_y].main==33) \
 		 && flag))||laser_shot.running)
     {
+                Draw_Update();
 		Redraw();
 		Check_Line_Of_Fire();
 		t=Shoot_Laser_AntiTank();

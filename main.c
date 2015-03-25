@@ -51,14 +51,25 @@ int main(int argc,char **argv)
     Load_Config();
 		
 	config_file.tile_size=32;
+        int w = 512+188;
+        int h = 512;
 	
         SDL_Window* window = SDL_CreateWindow("LTanks", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, \
-                             0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP);
-        scr.screen = SDL_CreateRenderer(window, -1, 0);
+                             w, h, 0);
+        scr.renderer = SDL_CreateRenderer(window, -1, 0);
+        SDL_RenderSetLogicalSize(scr.renderer, w, h);
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-        SDL_RenderSetLogicalSize(scr.screen, 512+188, 512);
+        scr.screen = SDL_CreateRGBSurface(0, w, h, 32,
+                                        0x00FF0000,
+                                        0x0000FF00,
+                                        0x000000FF,
+                                        0xFF000000);
+        scr.texture = SDL_CreateTexture(scr.renderer,
+                                            SDL_PIXELFORMAT_ARGB8888,
+                                            SDL_TEXTUREACCESS_STREAMING,
+                                            w, h);
         
-    if(scr.screen==NULL)
+    if(scr.renderer==NULL)
     {
         printf("Unable to Draw Screen: %s\n",SDL_GetError());
         exit(1);
@@ -73,8 +84,9 @@ int main(int argc,char **argv)
     if(Load_Next_Level())
         Load_Level(cur_stat.cur_level);
     
-    Redraw();
     Draw_SideBar();
+    Draw_Update();
+    Redraw();
     
     while(1)
     {
@@ -103,23 +115,27 @@ int main(int argc,char **argv)
                         Make_Undo();
                         cur_stat.shots++;
                         Draw_SideBar();
-						laser_shot.r_x=cur_stat.tank_x;
-						laser_shot.r_y=cur_stat.tank_y;
-						laser_shot.dir=cur_stat.orientation;
-						Find_Laser_Pos();
-						laser_shot.running=1;
+                        Draw_Update();
+                        Redraw();
+                                laser_shot.r_x=cur_stat.tank_x;
+				laser_shot.r_y=cur_stat.tank_y;
+				laser_shot.dir=cur_stat.orientation;
+				Find_Laser_Pos();
+				laser_shot.running=1;
                         Shoot_Laser(1);
-						Redraw();
+                        Draw_Update();
+			Redraw();
                         break;
                     case SDLK_BACKSPACE:
                         Undo();
-                        Redraw();
                         Draw_SideBar();
+                        Redraw();
                         break;
                     case SDLK_RETURN:
                         Load_Level(cur_stat.cur_level);
-                        Redraw();
                         Draw_SideBar();
+                        Draw_Update();
+                        Redraw();
                         break;
                     case SDLK_h:
                         Show_Hint();
@@ -131,16 +147,18 @@ int main(int argc,char **argv)
                         if(Load_Next_Level())
                         {
                             Load_Level(cur_stat.cur_level);
-                            Redraw();
                             Draw_SideBar();
+                            Draw_Update();
+                            Redraw();
                         }
                         break;
                     case SDLK_p:
                         if(Load_Previous_Level())
                         {
                             Load_Level(cur_stat.cur_level);
-                            Redraw();
                             Draw_SideBar();
+                            Draw_Update();
+                            Redraw();
                         }
                         break;
                     default:
@@ -161,20 +179,23 @@ int main(int argc,char **argv)
                         break;
                         case 2:
                         Undo();
-                        Redraw();
                         Draw_SideBar();
+                        Draw_Update();
+                        Redraw();
                         break;
                         case 3:
                         Load_Level(cur_stat.cur_level);
-                        Redraw();
                         Draw_SideBar();
+                        Draw_Update();
+                        Redraw();
                         break;
                         case 4:
                          if(Load_Previous_Level())
                         {
                             Load_Level(cur_stat.cur_level);
-                            Redraw();
                             Draw_SideBar();
+                            Draw_Update();
+                            Redraw();
                         }
                         break;
                         case 5:
@@ -182,8 +203,9 @@ int main(int argc,char **argv)
                         if(Load_Next_Level())
                         {
                             Load_Level(cur_stat.cur_level);
-                            Redraw();
                             Draw_SideBar();
+                            Draw_Update();
+                            Redraw();
                         }
                         break;
                         default:

@@ -1,7 +1,7 @@
 CC = gcc
 #CC = emscripten/emcc
-FLAGS = -Wall
-LIBS = -lSDL -lSDL_ttf
+FLAGS = -Wall -g 
+LIBS = -lSDL2 -lSDL2_ttf
 TARGET = ltanks
 OBJ = main.o loadfile.o drawscreen.o scale.o gui.o bmp_loader.o play.o
 all: $(TARGET)

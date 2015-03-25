@@ -1,6 +1,5 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<SDL/SDL.h>
 #include "scale.h"
 
 SDL_Surface * Scale(SDL_Surface *bmp,unsigned int size_y)

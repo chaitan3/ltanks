@@ -195,7 +195,7 @@ void Draw_Update()
 
 void Redraw()
 {
-    Draw_Update();
+    SDL_UpdateTexture(scr.texture, NULL, scr.screen->pixels, scr.screen->pitch);
     SDL_RenderClear(scr.renderer);
     SDL_RenderCopy(scr.renderer, scr.texture, NULL, NULL);
     SDL_RenderPresent(scr.renderer);
@@ -218,9 +218,9 @@ void Draw_Laser_Shot()
 				
 		SDL_BlitSurface(Bitmaps[bit],NULL,scr.screen,&dest);
 		
-		SDL_UpdateRect(scr.screen,dest.x,dest.y,Bitmaps[bit]->w,Bitmaps[bit]->h);
+		//SDL_UpdateRect(scr.screen,dest.x,dest.y,Bitmaps[bit]->w,Bitmaps[bit]->h);
 	}
-    
+    Redraw();
 }
 
 void Clear_Laser_Shot()
@@ -236,7 +236,7 @@ void Clear_Laser_Shot()
 		Draw_Tile(r_x,r_y);
 		dest.x=r_y*config_file.tile_size;
 		dest.y=r_x*config_file.tile_size;
-		SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
+		//SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
 		switch(laser_shot.dir)
 		{
 			case UP:
@@ -258,15 +258,16 @@ void Clear_Laser_Shot()
 			dest.x=r_y*config_file.tile_size;
 			dest.y=r_x*config_file.tile_size;
 		}
-		SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
+		//SDL_UpdateRect(scr.screen,dest.x,dest.y,dest.w,dest.h);
 	}	
+    Redraw();
 }
 
 void Draw_Tile(Uint8 i,Uint8 j)
 {
     long int pitch,pitch_t;
     unsigned int x=0;
-    Uint8 r,g,b,bpp,m,n;
+    Uint8 r,g,b,bpp,bpp_t,m,n;
     SDL_Rect dest;
             
     dest.x=config_file.tile_size*j;
@@ -280,6 +281,7 @@ void Draw_Tile(Uint8 i,Uint8 j)
         pitch=Mask[cur_stat.blocks[i][j].top-1]->pitch;
         pitch_t=scr.screen->pitch;
         bpp=Mask[cur_stat.blocks[i][j].top-1]->format->BytesPerPixel;
+        bpp_t=scr.screen->format->BytesPerPixel;
         
         for(m=0;m<config_file.tile_size;m++)
         {
@@ -296,17 +298,17 @@ void Draw_Tile(Uint8 i,Uint8 j)
                 if(r==0 && g==0 && b==0)
                 {
                     *(Uint8 *) (scr.screen->pixels +(n+dest.y)*pitch_t \
-                        +(m+dest.x)*bpp)=*(Uint8 *) \
+                        +(m+dest.x)*bpp_t)=*(Uint8 *) \
                         (Bitmaps[cur_stat.blocks[i][j].top-1]->pixels \
                         +n*pitch +m*bpp);
                     
                     *(Uint8 *) (scr.screen->pixels +(n+dest.y)*pitch_t \
-                        +(m+dest.x)*bpp+1)=*(Uint8 *) \
+                        +(m+dest.x)*bpp_t+1)=*(Uint8 *) \
                         (Bitmaps[cur_stat.blocks[i][j].top-1]->pixels \
                         +n*pitch +m*bpp+1);
                     
                     *(Uint8 *) (scr.screen->pixels +(n+dest.y)*pitch_t \
-                        +(m+dest.x)*bpp+2)=*(Uint8 *) \
+                        +(m+dest.x)*bpp_t+2)=*(Uint8 *) \
                         (Bitmaps[cur_stat.blocks[i][j].top-1]->pixels \
                         +n*pitch +m*bpp+2);
                 }
