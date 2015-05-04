@@ -23,4 +23,5 @@ struct GUIButton {
     SDL_Surface *button;
 };
 extern struct GUIButton gui_button[NUM_BUTTONS];
+extern int main_loop_running;
 #endif

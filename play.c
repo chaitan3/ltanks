@@ -20,6 +20,9 @@
 #include "gui.h"
 #include "play.h"
 #include "loadfile.h"
+#include <emscripten.h>
+#include <unistd.h>
+int main_loop_running=1;
 
 void Tank_Move(Uint8 direction)
 {
@@ -131,6 +134,13 @@ void Tank_Move(Uint8 direction)
 
 void Shoot_Laser(Uint8 on)
 {
+    int resume = 0;
+    if (main_loop_running) {
+        emscripten_pause_main_loop();
+        resume = 1;
+        main_loop_running = 0;
+    }
+
     Uint8 i,flag,tank=0;
 	if(on==1)
 		tank=1;
@@ -156,7 +166,8 @@ void Shoot_Laser(Uint8 on)
 				break;
 			}
 			Draw_Laser_Shot();
-			SDL_Delay(20);
+			//SDL_Delay(20);
+			emscripten_sleep(20);
 			Clear_Laser_Shot();
 			if(i==0)
 			{
@@ -164,7 +175,8 @@ void Shoot_Laser(Uint8 on)
 				if(flag>0)
 				{
 					Draw_Laser_Shot();
-					SDL_Delay(20);
+                                        //SDL_Delay(20);
+					emscripten_sleep(20);
 					Clear_Laser_Shot();
 					break;
 				}
@@ -187,6 +199,9 @@ void Shoot_Laser(Uint8 on)
 		}
 	}
 	Check_Ice_Ride(&(laser_shot.r_x),&(laser_shot.r_y));
+
+    if (resume)
+        emscripten_resume_main_loop();
 }
 
 int Shoot_Laser_AntiTank()
@@ -233,7 +248,7 @@ int Shoot_Laser_AntiTank()
 				laser_shot.running=0;
 		}
 		Draw_Laser_Shot();
-		SDL_Delay(20);
+		emscripten_sleep(20);
 		Clear_Laser_Shot();
 		if(i==0)
 		{
@@ -242,7 +257,7 @@ int Shoot_Laser_AntiTank()
 			if(flag>0)
 			{
 				Draw_Laser_Shot();
-				SDL_Delay(20);
+				emscripten_sleep(20);
 				Clear_Laser_Shot();
 				break;
 			}
@@ -319,6 +334,14 @@ void Check_Ride()
     Uint8 dir,flag=1,cond;
     Uint8 x[255],y[255],m=0,n,t;
     laser_shot.running=0;
+    int resume = 0;
+    if (main_loop_running) {
+        emscripten_pause_main_loop();
+        resume = 1;
+        main_loop_running = 0;
+    }
+
+
 	
     while((cond=((cur_stat.blocks[cur_stat.tank_x][cur_stat.tank_y].main==24 \
         || cur_stat.blocks[cur_stat.tank_x][cur_stat.tank_y].main==27 \
@@ -408,6 +431,9 @@ void Check_Ride()
 			Check_Wormhole(&cur_stat.tank_x,&cur_stat.tank_y);
 		}
     }
+
+    if (resume)
+        emscripten_resume_main_loop();
     
 }
 
@@ -778,6 +804,14 @@ void Check_Ice_Ride(Uint8 *r_x,Uint8 *r_y)
 	
 	laser_shot.running=0;
     b=cur_stat.blocks[*r_x][*r_y].main;
+
+    int resume = 0;
+    if (main_loop_running) {
+        emscripten_pause_main_loop();
+        resume = 1;
+        main_loop_running = 0;
+    }
+
     while((cond=((b==56 || b==57) && flag))||laser_shot.running)
     {
         x=*r_x;
@@ -850,7 +884,8 @@ void Check_Ice_Ride(Uint8 *r_x,Uint8 *r_y)
 			Check_Wormhole(r_x,r_y);
 		}
     }
-    
+    if (resume)
+        emscripten_resume_main_loop();
 }
 
 void Undo()

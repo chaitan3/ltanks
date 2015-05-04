@@ -21,6 +21,7 @@
 #include "drawscreen.h"
 #include "play.h"
 #include "gui.h"
+#include <emscripten.h>
 
 struct levels *level=NULL;
 struct CurrentStatus cur_stat,undo_stat[10];
@@ -32,9 +33,140 @@ SDL_Surface *Bitmaps[71],*Mask[60];
 int numlevels=0,undo_index;
 Uint8 undo_count;
 
+void repeat() {
+    SDL_Event event;
+    while(SDL_PollEvent(&event))
+        {
+                if(event.type==SDL_KEYDOWN)
+                {	
+                        switch(event.key.keysym.sym)
+        {
+            case SDLK_ESCAPE:
+                Unload();
+            case SDLK_UP:
+                Tank_Move(UP);
+                break;
+            case SDLK_DOWN:
+                Tank_Move(DOWN);
+                break;
+            case SDLK_LEFT:
+                Tank_Move(LEFT);
+                break;
+            case SDLK_RIGHT:
+                Tank_Move(RIGHT);
+                break;
+            case SDLK_SPACE:
+                Make_Undo();
+                cur_stat.shots++;
+                Draw_SideBar();
+                Draw_Update();
+                Redraw();
+                        laser_shot.r_x=cur_stat.tank_x;
+                        laser_shot.r_y=cur_stat.tank_y;
+                        laser_shot.dir=cur_stat.orientation;
+                        Find_Laser_Pos();
+                        laser_shot.running=1;
+                Shoot_Laser(1);
+                Draw_Update();
+                Redraw();
+                break;
+            case SDLK_BACKSPACE:
+                Undo();
+                Draw_SideBar();
+                Redraw();
+                break;
+            case SDLK_RETURN:
+                Load_Level(cur_stat.cur_level);
+                Draw_SideBar();
+                Draw_Update();
+                Redraw();
+                break;
+            case SDLK_h:
+                Show_Hint();
+                break;
+            case SDLK_l:
+                Draw_LoadBox();
+                break;   
+            case SDLK_n:
+                if(Load_Next_Level())
+                {
+                    Load_Level(cur_stat.cur_level);
+                    Draw_SideBar();
+                    Draw_Update();
+                    Redraw();
+                }
+                break;
+            case SDLK_p:
+                if(Load_Previous_Level())
+                {
+                    Load_Level(cur_stat.cur_level);
+                    Draw_SideBar();
+                    Draw_Update();
+                    Redraw();
+                }
+                break;
+            default:
+                break;
+                        }
+                }	
+    else if(event.type==SDL_MOUSEBUTTONDOWN)
+    {
+        if(event.button.button==SDL_BUTTON_LEFT)
+        {
+            switch(GUI_Left_Mouse_Click(event.button.x,event.button.y))
+            {
+                case 0:
+                Show_Hint();
+                break;
+                case 1:
+                Draw_LoadBox();
+                break;
+                case 2:
+                Undo();
+                Draw_SideBar();
+                Draw_Update();
+                Redraw();
+                break;
+                case 3:
+                Load_Level(cur_stat.cur_level);
+                Draw_SideBar();
+                Draw_Update();
+                Redraw();
+                break;
+                case 4:
+                 if(Load_Previous_Level())
+                {
+                    Load_Level(cur_stat.cur_level);
+                    Draw_SideBar();
+                    Draw_Update();
+                    Redraw();
+                }
+                break;
+                case 5:
+                
+                if(Load_Next_Level())
+                {
+                    Load_Level(cur_stat.cur_level);
+                    Draw_SideBar();
+                    Draw_Update();
+                    Redraw();
+                }
+                break;
+                default:
+                break;
+            }
+        }
+    }
+                else if(event.type==SDL_QUIT)
+                {
+                    Unload();
+                }
+    }
+
+}
+
 int main(int argc,char **argv)
 {
-    SDL_Event event;
     
     if(SDL_Init(SDL_INIT_VIDEO)==-1)
     {
@@ -75,6 +207,12 @@ int main(int argc,char **argv)
         exit(1);
     }
     scr.font=TTF_OpenFont("data/font.ttf",12);
+    if(scr.font==NULL)
+    {
+        printf("Unable to Open Font: %s\n",TTF_GetError());
+        exit(1);
+    }
+ 
     
     Load_SideBar_Buttons();      
     Load_Levels();
@@ -87,136 +225,16 @@ int main(int argc,char **argv)
     Draw_SideBar();
     Draw_Update();
     Redraw();
-    
-    while(1)
-    {
-        SDL_Delay(10);
-        while(SDL_PollEvent(&event))
-		{
-			if(event.type==SDL_KEYDOWN)
-			{	
-				switch(event.key.keysym.sym)
-                {
-                    case SDLK_ESCAPE:
-                        Unload();
-                    case SDLK_UP:
-                        Tank_Move(UP);
-                        break;
-                    case SDLK_DOWN:
-                        Tank_Move(DOWN);
-                        break;
-                    case SDLK_LEFT:
-                        Tank_Move(LEFT);
-                        break;
-                    case SDLK_RIGHT:
-                        Tank_Move(RIGHT);
-                        break;
-                    case SDLK_SPACE:
-                        Make_Undo();
-                        cur_stat.shots++;
-                        Draw_SideBar();
-                        Draw_Update();
-                        Redraw();
-                                laser_shot.r_x=cur_stat.tank_x;
-				laser_shot.r_y=cur_stat.tank_y;
-				laser_shot.dir=cur_stat.orientation;
-				Find_Laser_Pos();
-				laser_shot.running=1;
-                        Shoot_Laser(1);
-                        Draw_Update();
-			Redraw();
-                        break;
-                    case SDLK_BACKSPACE:
-                        Undo();
-                        Draw_SideBar();
-                        Redraw();
-                        break;
-                    case SDLK_RETURN:
-                        Load_Level(cur_stat.cur_level);
-                        Draw_SideBar();
-                        Draw_Update();
-                        Redraw();
-                        break;
-                    case SDLK_h:
-                        Show_Hint();
-                        break;
-                    case SDLK_l:
-                        Draw_LoadBox();
-                        break;   
-                    case SDLK_n:
-                        if(Load_Next_Level())
-                        {
-                            Load_Level(cur_stat.cur_level);
-                            Draw_SideBar();
-                            Draw_Update();
-                            Redraw();
-                        }
-                        break;
-                    case SDLK_p:
-                        if(Load_Previous_Level())
-                        {
-                            Load_Level(cur_stat.cur_level);
-                            Draw_SideBar();
-                            Draw_Update();
-                            Redraw();
-                        }
-                        break;
-                    default:
-                        break;
-				}
-			}	
-            else if(event.type==SDL_MOUSEBUTTONDOWN)
-            {
-                if(event.button.button==SDL_BUTTON_LEFT)
-                {
-                    switch(GUI_Left_Mouse_Click(event.button.x,event.button.y))
-                    {
-                        case 0:
-                        Show_Hint();
-                        break;
-                        case 1:
-                        Draw_LoadBox();
-                        break;
-                        case 2:
-                        Undo();
-                        Draw_SideBar();
-                        Draw_Update();
-                        Redraw();
-                        break;
-                        case 3:
-                        Load_Level(cur_stat.cur_level);
-                        Draw_SideBar();
-                        Draw_Update();
-                        Redraw();
-                        break;
-                        case 4:
-                         if(Load_Previous_Level())
-                        {
-                            Load_Level(cur_stat.cur_level);
-                            Draw_SideBar();
-                            Draw_Update();
-                            Redraw();
-                        }
-                        break;
-                        case 5:
-                        
-                        if(Load_Next_Level())
-                        {
-                            Load_Level(cur_stat.cur_level);
-                            Draw_SideBar();
-                            Draw_Update();
-                            Redraw();
-                        }
-                        break;
-                        default:
-                        break;
-                    }
-                }
-            }
-			else if(event.type==SDL_QUIT)
-			{
-                Unload();
-			}
-        }
-    }
+
+    emscripten_set_main_loop(repeat, 60, 1);
+    //#ifdef __EMSCRIPTEN__
+    //  emscripten_set_main_loop(repeat, 60, 1);
+    //  #else
+    //  while (1) {
+    //    repeat();
+    //    SDL_Delay(10);
+    //  }
+    // #endif  
 }
+
+

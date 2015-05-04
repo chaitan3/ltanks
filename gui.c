@@ -3,6 +3,7 @@
 #include "gui.h"
 #include "play.h"
 #include "loadfile.h"
+#include <emscripten.h>
 
 void Draw_SideBar()
 {
@@ -132,6 +133,12 @@ void Draw_SideBar()
 
 void Draw_LoadBox()
 {
+    int resume = 0;
+    if (main_loop_running) {
+        emscripten_pause_main_loop();
+        resume = 1;
+        main_loop_running = 0;
+    }
     int lvl;
     char lvl_str[5]="0",buff[100];
     SDL_Event event;
@@ -165,7 +172,7 @@ void Draw_LoadBox()
     
     while(flag)
     {
-        SDL_Delay(10);
+        emscripten_sleep(10);
         while(SDL_PollEvent(&event))
         {
             if(event.type==SDL_MOUSEBUTTONDOWN)
@@ -304,10 +311,20 @@ void Draw_LoadBox()
     }
     else
         Unload();
+    if (resume)
+        emscripten_resume_main_loop();
 }
 
 void Show_Hint()
 {
+    int resume = 0;
+    if (main_loop_running) {
+        emscripten_pause_main_loop();
+        resume = 1;
+        main_loop_running = 0;
+    }
+
+
     Uint8 flag=1,i,pos,pos_t=0;
     char buff[50];
     SDL_Event event;
@@ -361,7 +378,7 @@ void Show_Hint()
 	flag=1;
     while(flag)
     {
-        SDL_Delay(10);
+        emscripten_sleep(10);
         while(SDL_PollEvent(&event))
         {
             if(event.type==SDL_MOUSEBUTTONDOWN)
@@ -389,10 +406,19 @@ void Show_Hint()
     }
     Redraw();
     SDL_FreeSurface(pause);
+    if (resume)
+        emscripten_resume_main_loop();
 }
 
 void Game_Pause(char *str)
 {
+    int resume = 0;
+    if (main_loop_running) {
+        emscripten_pause_main_loop();
+        resume = 1;
+        main_loop_running = 0;
+    }
+
     SDL_Event event;
     Uint8 flag=1,i;
     
@@ -425,7 +451,7 @@ void Game_Pause(char *str)
     
     while(flag)
     {
-        SDL_Delay(10);
+        emscripten_sleep(10);
         while(SDL_PollEvent(&event))
 	{
             if(event.type==SDL_MOUSEBUTTONDOWN)
@@ -524,6 +550,8 @@ void Game_Pause(char *str)
         }
     }
     SDL_FreeSurface(pause);
+    if (resume)
+        emscripten_resume_main_loop();
 } 
 
 int Center_Text_Width(char *text,int width)

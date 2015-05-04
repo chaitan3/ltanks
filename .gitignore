@@ -1,3 +1,7 @@
 *.log
 *.o
 .*.swp
+*.html*
+*.bc
+*.js
+*.data
